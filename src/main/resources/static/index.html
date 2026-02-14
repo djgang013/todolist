@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Todo App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Liquid Mercury Background */
+        .liquid-mercury {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .liquid-mercury::before {
+            content: "";
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            filter: url(#mercury);
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+    
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .inputGroup {
+            flex: 1;
+            position: relative;
+        }
+
+        .inputGroup input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .inputGroup input:focus {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        button.add {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 13rem;
+            overflow: hidden;
+            height: 3rem;
+            background-size: 300% 300%;
+            cursor: pointer;
+            backdrop-filter: blur(1rem);
+            border-radius: 5rem;
+            transition: 0.5s;
+            animation: gradient_301 5s ease infinite;
+            border: double 4px transparent;
+            background-image: linear-gradient(#212121, #212121),
+                linear-gradient(
+                    137.48deg,
+                    #ffdb3b 10%,
+                    #fe53bb 45%,
+                    #8f51ea 67%,
+                    #0044ff 87%
+                );
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            position: relative;
+        }
+
+        button.add strong {
+            z-index: 2;
+            font-size: 12px;
+            letter-spacing: 5px;
+            color: #ffffff;
+            text-shadow: 0 0 4px white;
+        }
+
+        #container-stars {
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.5s;
+            backdrop-filter: blur(1rem);
+            border-radius: 5rem;
+        }
+
+        #glow {
+            position: absolute;
+            display: flex;
+            width: 12rem;
+        }
+
+        .circle {
+            width: 100%;
+            height: 30px;
+            filter: blur(2rem);
+            animation: pulse_3011 4s infinite;
+            z-index: -1;
+        }
+
+        .circle:nth-of-type(1) {
+            background: rgba(254, 83, 186, 0.636);
+        }
+
+        .circle:nth-of-type(2) {
+            background: rgba(142, 81, 234, 0.704);
+        }
+
+        button.add:hover #container-stars {
+            z-index: 1;
+            background-color: #212121;
+        }
+
+        button.add:hover {
+            transform: scale(1.1);
+        }
+
+        button.add:active {
+            border: double 4px #fe53bb;
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            animation: none;
+        }
+
+        button.add:active .circle {
+            background: #fe53bb;
+        }
+
+        #stars {
+            position: relative;
+            background: transparent;
+            width: 200rem;
+            height: 200rem;
+        }
+
+        #stars::after {
+            content: "";
+            position: absolute;
+            top: -10rem;
+            left: -100rem;
+            width: 100%;
+            height: 100%;
+            animation: animStarRotate 90s linear infinite;
+        }
+
+        #stars::after {
+            background-image: radial-gradient(#ffffff 1px, transparent 1%);
+            background-size: 50px 50px;
+        }
+
+        #stars::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 170%;
+            height: 500%;
+            animation: animStar 60s linear infinite;
+        }
+
+        #stars::before {
+            background-image: radial-gradient(#ffffff 1px, transparent 1%);
+            background-size: 50px 50px;
+            opacity: 0.5;
+        }
+
+        @keyframes animStar {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-135rem);
+            }
+        }
+
+        @keyframes animStarRotate {
+            from {
+                transform: rotate(360deg);
+            }
+            to {
+                transform: rotate(0);
+            }
+        }
+
+        @keyframes gradient_301 {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes pulse_3011 {
+            0% {
+                transform: scale(0.75);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+            }
+            100% {
+                transform: scale(0.75);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        /* Dark card background for todo list */
+        .card {
+            width: 100%;
+            min-height: 400px;
+            border-radius: 30px;
+            background: rgba(33, 33, 33, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 15px 15px 30px rgba(0, 0, 0, 0.5),
+                        -15px -15px 30px rgba(60, 60, 60, 0.1);
+            padding: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        ul { 
+            list-style: none; 
+            padding: 0;
+        }
+
+        li { 
+            background: rgba(42, 42, 42, 0.9);
+            margin: 12px 0; 
+            padding: 18px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-radius: 15px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3),
+                        -2px -2px 8px rgba(80, 80, 80, 0.1);
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        li:hover {
+            transform: translateY(-3px);
+            background: rgba(51, 51, 51, 0.9);
+            box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4),
+                        -3px -3px 10px rgba(90, 90, 90, 0.15);
+        }
+
+        li span {
+            flex: 1;
+            font-size: 16px;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        li div {
+            display: flex;
+            gap: 8px;
+        }
+
+        button { 
+            border: none; 
+            padding: 8px 14px; 
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:not(.delete):not(.add) {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.8) 0%, rgba(138, 43, 226, 0.8) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        button:not(.delete):not(.add):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        button.delete { 
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 20px;
+            border: 3px solid #e63946;
+            display: inline-flex;
+            overflow: hidden;
+            background: #e63946;
+            box-shadow:
+                inset 4px 4px 6px rgba(255, 255, 255, 0.6),
+                inset -4px -4px 6px rgba(0, 0, 0, 0.3),
+                1px 1px 6px rgba(0, 0, 0, 0.3),
+                -1px -1px 6px rgba(255, 255, 255, 0.5);
+            transition:
+                box-shadow 0.3s ease,
+                transform 0.1s ease;
+            font-size: 0;
+        }
+
+        button.delete span {
+            font-family: "Times New Roman", Times, serif;
+            font-weight: 900;
+            font-size: 14px;
+            color: rgb(180, 20, 40);
+            text-shadow:
+                1px 1px 1px rgba(255, 255, 255, 0.4),
+                -1px -1px 1px rgba(0, 0, 0, 0.4);
+            position: relative;
+            display: inline-block;
+            transition: transform 0.3s ease-out;
+            z-index: 1;
+            padding: 0px 2px;
+        }
+
+        button.delete:hover span {
+            color: #e63946;
+        }
+
+        button.delete:active span {
+            color: #e63946;
+            text-shadow:
+                1px 1px 1px rgba(255, 255, 255, 0.5),
+                -1px -1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        button.delete:active {
+            box-shadow:
+                inset 2px 2px 1px rgba(0, 0, 0, 0.3),
+                inset -2px -2px 1px rgba(255, 255, 255, 0.5);
+            transform: scale(0.98);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* On/Off Toggle Button */
+        .onoff-btn {
+            --hue: 0;
+            --saturation: 70%;
+            --height: 36px;
+            --icon-size: 20px;
+            --transition-speed: 100ms;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+
+            height: var(--height);
+            min-width: var(--height);
+
+            padding: 0;
+            margin: 0;
+
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1em;
+
+            outline: none;
+            border: none;
+            border-radius: 100ch;
+            background-color: hsl(var(--hue), var(--saturation), 40%);
+            color: hsl(var(--hue), var(--saturation), 88%);
+
+            box-shadow:
+                2px 2px 2px 0 hsl(var(--hue), var(--saturation), 20%),
+                0 0 1px -1px hsl(var(--hue), var(--saturation), 0%),
+                1px 1px 2px 10px hsl(var(--hue), var(--saturation), 40%),
+                0 0 0 11px hsl(var(--hue), var(--saturation), 60%),
+                -2px -2px 2px 10px hsl(var(--hue), var(--saturation), 75%),
+                2px 2px 3px 11px hsl(var(--hue), var(--saturation), 15%),
+                0 0 0 14px hsl(var(--hue), var(--saturation), 25%),
+                4px 4px 12px 6px hsl(var(--hue), var(--saturation), 20%),
+                2px 2px 6px 0 hsl(var(--hue), var(--saturation), 60%) inset,
+                -2px -2px 6px 0px hsl(var(--hue), var(--saturation), 20%) inset;
+
+            cursor: pointer;
+            transition: box-shadow var(--transition-speed) ease-in-out;
+        }
+
+        .onoff-btn-icon {
+            stroke: hsl(var(--hue), var(--saturation), 88%);
+            fill: none;
+            width: var(--icon-size);
+        }
+
+        .onoff-btn-text,
+        .onoff-btn-icon {
+            transform-origin: center;
+            transition: transform var(--transition-speed) ease-in-out;
+        }
+
+        .onoff-btn:hover,
+        .onoff-btn:focus-visible {
+            box-shadow:
+                2px 2px 2px 0 hsl(var(--hue), var(--saturation), 20%),
+                0 0 6px -1px hsl(var(--hue), var(--saturation), 10%),
+                1px 1px 2px 10px hsl(var(--hue), var(--saturation), 40%),
+                0 0 0 11px hsl(var(--hue), var(--saturation), 60%),
+                -2px -2px 2px 10px hsl(var(--hue), var(--saturation), 75%),
+                2px 2px 3px 11px hsl(var(--hue), var(--saturation), 15%),
+                0 0 0 14px hsl(var(--hue), var(--saturation), 25%),
+                4px 4px 12px 6px hsl(var(--hue), var(--saturation), 20%),
+                2px 2px 6px 0 hsl(var(--hue), var(--saturation), 80%) inset,
+                -2px -2px 6px 0px hsl(var(--hue), var(--saturation), 35%) inset;
+        }
+
+        .onoff-btn:hover .onoff-btn-text,
+        .onoff-btn:hover .onoff-btn-icon,
+        .onoff-btn:focus-visible .onoff-btn-text,
+        .onoff-btn:focus-visible .onoff-btn-icon {
+            transform: scale(1.1);
+        }
+
+        .onoff-btn:active {
+            box-shadow:
+                2px 2px 2px 0 hsl(var(--hue), var(--saturation), 60%),
+                0 0 6px -1px hsl(var(--hue), var(--saturation), 10%),
+                1px 1px 2px 10px hsl(var(--hue), var(--saturation), 40%),
+                0 0 0 11px hsl(var(--hue), var(--saturation), 60%),
+                -2px -2px 2px 10px hsl(var(--hue), var(--saturation), 75%),
+                2px 2px 3px 11px hsl(var(--hue), var(--saturation), 15%),
+                0 0 0 14px hsl(var(--hue), var(--saturation), 25%),
+                4px 4px 12px 6px hsl(var(--hue), var(--saturation), 20%),
+                6px 6px 8px 0 hsl(var(--hue), var(--saturation), 20%) inset,
+                -6px -6px 8px 0px hsl(var(--hue), var(--saturation), 25%) inset;
+        }
+
+        .onoff-btn:active .onoff-btn-text,
+        .onoff-btn:active .onoff-btn-icon {
+            transform: scale(0.85);
+        }
+
+        .onoff-btn-checkbox {
+            position: absolute;
+            z-index: 1;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .onoff-btn:has(.onoff-btn-checkbox:checked) {
+            --hue: 135;
+            box-shadow:
+                2px 2px 2px 0 hsl(var(--hue), var(--saturation), 60%),
+                0 0 6px -1px hsl(var(--hue), var(--saturation), 10%),
+                1px 1px 2px 10px hsl(var(--hue), var(--saturation), 40%),
+                0 0 0 11px hsl(var(--hue), var(--saturation), 60%),
+                -2px -2px 2px 10px hsl(var(--hue), var(--saturation), 75%),
+                2px 2px 3px 11px hsl(var(--hue), var(--saturation), 15%),
+                0 0 0 14px hsl(var(--hue), var(--saturation), 25%),
+                4px 4px 12px 6px hsl(var(--hue), var(--saturation), 20%),
+                2px 2px 6px 0 hsl(var(--hue), var(--saturation), 20%) inset,
+                -2px -2px 6px 0px hsl(var(--hue), var(--saturation), 25%) inset;
+        }
+
+        .onoff-btn:has(.onoff-btn-checkbox:checked) .onoff-btn-text,
+        .onoff-btn:has(.onoff-btn-checkbox:checked) .onoff-btn-icon {
+            transform: scale(0.95);
+        }
+
+        .onoff-btn:has(.onoff-btn-checkbox:checked):active {
+            box-shadow:
+                2px 2px 2px 0 hsl(var(--hue), var(--saturation), 60%),
+                0 0 6px -1px hsl(var(--hue), var(--saturation), 10%),
+                1px 1px 2px 10px hsl(var(--hue), var(--saturation), 40%),
+                0 0 0 11px hsl(var(--hue), var(--saturation), 60%),
+                -2px -2px 2px 10px hsl(var(--hue), var(--saturation), 75%),
+                2px 2px 3px 11px hsl(var(--hue), var(--saturation), 15%),
+                0 0 0 14px hsl(var(--hue), var(--saturation), 25%),
+                4px 4px 12px 6px hsl(var(--hue), var(--saturation), 20%),
+                6px 6px 8px 0 hsl(var(--hue), var(--saturation), 20%) inset,
+                -6px -6px 8px 0px hsl(var(--hue), var(--saturation), 25%) inset;
+        }
+
+        .onoff-btn:has(.onoff-btn-checkbox:checked):active .onoff-btn-text,
+        .onoff-btn:has(.onoff-btn-checkbox:checked):active .onoff-btn-icon {
+            transform: scale(0.85);
+        }
+
+        .onoff-btn:has(.onoff-btn-checkbox:focus-visible) {
+            --saturation: 95%;
+        }
+
+        li div {
+            align-items: center;
+            gap: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Liquid Mercury Background -->
+    <div class="liquid-mercury"></div>
+
+    <!-- SVG Filter -->
+    <svg width="0" height="0">
+        <filter id="mercury">
+            <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.02"
+                numOctaves="3"
+                seed="1"
+                result="noise"
+            ></feTurbulence>
+            <feGaussianBlur in="noise" stdDeviation="10" result="blur"></feGaussianBlur>
+            <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 20 -9"
+                result="goo"
+            ></feColorMatrix>
+            <feSpecularLighting
+                in="goo"
+                surfaceScale="10"
+                specularConstant="1.5"
+                specularExponent="30"
+                lighting-color="white"
+                result="specular"
+            >
+                <feDistantLight azimuth="235" elevation="50"></feDistantLight>
+            </feSpecularLighting>
+            <feComposite
+                in="goo"
+                in2="specular"
+                operator="arithmetic"
+                k1="0"
+                k2="1"
+                k3="1"
+                k4="0"
+            ></feComposite>
+        </filter>
+    </svg>
+
+    <h1>✨ My Todo List</h1>
+
+    <div class="container">
+        <div class="input-container">
+            <div class="inputGroup">
+                <input type="text" id="todoInput" placeholder="Add a new task...">
+            </div>  
+            <button type="button" class="add" onclick="addTodo()">
+                <strong>ADD TASK</strong>
+                <div id="container-stars">
+                    <div id="stars"></div>
+                </div>
+                <div id="glow">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
+            </button>
+        </div>
+        <ul id="todoList">
+        </ul>
+    </div>
+    
+    <script>
+        const API_URL = '/api/todos';
+
+        // 1. Fetch and Display Todos on Load
+        async function fetchTodos() {
+            const response = await fetch(API_URL);
+            const todos = await response.json();
+            const list = document.getElementById('todoList');
+            list.innerHTML = ''; // Clear current list
+
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                   <span style="text-decoration:${todo.completed ? 'line-through' : 'none'}">
+                        ${todo.title}
+                    </span>
+                    <div>
+                        <div class="onoff-btn">
+                            <input type="checkbox" class="onoff-btn-checkbox" ${todo.completed ? 'checked' : ''} onchange="updateTodo(${todo.id}, this.checked)" />
+                            <svg class="onoff-btn-icon" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" stroke-linejoin="round" stroke-linecap="round"></path>
+                            </svg>
+                        </div>
+                        <button class="delete" onclick="deleteTodo(${todo.id})">
+                            <span>D</span><span>E</span><span>L</span><span>E</span><span>T</span><span>E</span>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // 2. Add a New Todo
+        async function addTodo() {
+            const input = document.getElementById('todoInput');
+            const title = input.value;
+            if (!title) return;
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title, completed: false })
+            });
+
+            input.value = ''; // Clear input
+            fetchTodos(); // Refresh list
+        }
+
+        // 3. Delete a Todo
+        async function deleteTodo(id) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            fetchTodos(); // Refresh list
+        }
+
+        async function updateTodo(id,completed) {
+            const response =await fetch(`${API_URL}/${id}`);
+            const todo = await response.json();
+            await fetch(`${API_URL}/${id}`,{
+                method:'PUT',
+                headers:{'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    title: todo.title,
+                    completed: completed}),
+
+
+            });
+            fetchTodos(); 
+        }
+        // Initial Load
+        fetchTodos();
+    </script>
+</body>
+</html>
